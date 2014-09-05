@@ -28,9 +28,12 @@
 
 + (NSString*) resolveImageResource:(NSString*)resource
 {
-	NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
-	BOOL isLessThaniOS4 = ([systemVersion compare:@"4.0" options:NSNumericSearch] == NSOrderedAscending);
-	
+	//NSString* systemVersion = [[UIDevice currentDevice] systemVersion];
+	//BOOL isLessThaniOS4 = ([systemVersion compare:@"4.0" options:NSNumericSearch] == NSOrderedAscending);
+
+	return [NSString stringWithFormat:@"%@.png", resource];
+
+	/*
 	// the iPad image (nor retina) differentiation code was not in 3.x, and we have to explicitly set the path
 	if (isLessThaniOS4)
 	{
@@ -38,8 +41,7 @@
 	} else if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)] == YES && [[UIScreen mainScreen] scale] == 2.00)
     {
 	    return [NSString stringWithFormat:@"%@@2x.png", resource];
-    }
-
+    }*/
 	
 	return resource;
 }
@@ -63,15 +65,12 @@
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     [super viewDidLoad];
+	[[UIApplication sharedApplication] setStatusBarHidden:YES];
     
-	self.refreshBtn.image = [UIImage imageNamed:[[self class]
-                                                 resolveImageResource:@"ChildBrowser.bundle/but_refresh"]];
-	self.backBtn.image = [UIImage imageNamed:[[self class]
-                                              resolveImageResource:@"ChildBrowser.bundle/arrow_left"]];
-	self.fwdBtn.image = [UIImage imageNamed:[[self class]
-                                        resolveImageResource:@"ChildBrowser.bundle/arrow_right"]];
-	self.safariBtn.image = [UIImage imageNamed:[[self class]
-                                           resolveImageResource:@"ChildBrowser.bundle/compass"]];
+	self.refreshBtn.image = [UIImage imageNamed:[[self class] resolveImageResource:@"ChildBrowser.bundle/but_refresh"]];
+	self.backBtn.image = [UIImage imageNamed:[[self class] resolveImageResource:@"ChildBrowser.bundle/arrow_left"]];
+	self.fwdBtn.image = [UIImage imageNamed:[[self class] resolveImageResource:@"ChildBrowser.bundle/arrow_right"]];
+	self.safariBtn.image = [UIImage imageNamed:[[self class] resolveImageResource:@"ChildBrowser.bundle/compass"]];
 
 	self.webView.delegate = self;
 	self.webView.scalesPageToFit = TRUE;
@@ -98,25 +97,12 @@
 	self.webView.delegate = nil;
     self.delegate = nil;
     self.orientationDelegate = nil;
-	
-#if !__has_feature(objc_arc)
-	[self.webView release];
-	[self.closeBtn release];
-	[self.refreshBtn release];
-	[self.addressLabel release];
-	[self.backBtn release];
-	[self.fwdBtn release];
-	[self.safariBtn release];
-	[self.spinner release];
-    [self.toolbar release];
-
-	[super dealloc];
-#endif
 }
 
 -(void)closeBrowser
 {
-	
+	[[UIApplication sharedApplication] setStatusBarHidden:NO];
+
 	if (self.delegate != NULL)
 	{
 		[self.delegate onClose];
@@ -125,13 +111,15 @@
         //Reference UIViewController.h Line:179 for update to iOS 5 difference - @RandyMcMillan
         [[self presentingViewController] dismissViewControllerAnimated:YES completion:nil];
     } else {
-        [[self parentViewController] dismissModalViewControllerAnimated:YES];
+        //[[self parentViewController] dismissModalViewControllerAnimated:YES];
+		[[self parentViewController] dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
 -(IBAction) onDoneButtonPress:(id)sender
 {
-    [self.webView stopLoading];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+	[self.webView stopLoading];
 	[self closeBrowser];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
@@ -149,7 +137,7 @@
 	
 	if(isImage)
 	{
-		NSURL* pURL = [[ [NSURL alloc] initWithString:imageURL ] autorelease];
+		NSURL* pURL = [ [NSURL alloc] initWithString:imageURL ];
 		[ [ UIApplication sharedApplication ] openURL:pURL  ];
 	}
 	else
@@ -193,7 +181,7 @@
 
 
 - (void)webViewDidStartLoad:(UIWebView *)sender {
-	self.addressLabel.text = @"Loading...";
+	self.addressLabel.text = @"Bezig met laden...";
 	self.backBtn.enabled = webView.canGoBack;
 	self.fwdBtn.enabled = webView.canGoForward;
 	
@@ -204,7 +192,7 @@
 - (void)webViewDidFinishLoad:(UIWebView *)sender 
 {
 	NSURLRequest *request = self.webView.request;
-	NSLog(@"New Address is : %@",request.URL.absoluteString);
+	NSLog(@"Adres is : %@",request.URL.absoluteString);
 
 	self.addressLabel.text = request.URL.absoluteString;
 	self.backBtn.enabled = webView.canGoBack;
@@ -284,7 +272,6 @@
     closeRG.direction = UISwipeGestureRecognizerDirectionLeft;
     closeRG.delegate=self;
     [self.view addGestureRecognizer:closeRG];
-    [closeRG release];
 }
 
 //- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
