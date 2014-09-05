@@ -32,7 +32,7 @@
             </feature>
         </config-file>
 
-        <source-file src="src/android/ChildBrowser.java" target-dir="src/com/phonegap/plugins/childBrowser" />
+        <source-file src="src/android/com/phonegap/plugins/childBrowser/ChildBrowser.java" target-dir="src/com/phonegap/plugins/childBrowser" />
     </platform>
 
     <!-- ios -->
