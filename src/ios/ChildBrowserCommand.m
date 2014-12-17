@@ -8,7 +8,8 @@
 //
 
 #import "ChildBrowserCommand.h"
-#import <Cordova/CDVViewController.h>
+//#import <Cordova/CDVViewController.h>
+#import <Cordova/CDV.h>
 
 @implementation ChildBrowserCommand
 
@@ -65,20 +66,18 @@
 
 -(void) onClose
 {
-    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                      messageAsDictionary:[self dictionaryForEvent:CLOSE_EVENT]];
+    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self dictionaryForEvent:CLOSE_EVENT]];
     [result setKeepCallbackAsBool:YES];
 
-    [self writeJavascript: [result toSuccessCallbackString:self.callbackId]];
+	[self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
 }
 
 -(void) onOpenInSafari
 {
-	CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                      messageAsDictionary:[self dictionaryForEvent:OPEN_EXTERNAL_EVENT]];
+	CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self dictionaryForEvent:OPEN_EXTERNAL_EVENT]];
     [result setKeepCallbackAsBool:YES];
 
-    [self writeJavascript: [result toSuccessCallbackString:self.callbackId]];
+	[self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
 }
 
 
@@ -91,11 +90,10 @@
 
     [dict setObject:encUrl forKey:@"location"];
 
-    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                      messageAsDictionary:dict];
+    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
     [result setKeepCallbackAsBool:YES];
 
-    [self writeJavascript: [result toSuccessCallbackString:self.callbackId]];
+	[self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
 }
 
 -(NSDictionary*) dictionaryForEvent:(NSNumber*) event
