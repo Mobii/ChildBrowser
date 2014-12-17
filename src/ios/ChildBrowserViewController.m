@@ -46,7 +46,9 @@
 	return resource;
 }
 
-
+- (BOOL)prefersStatusBarHidden {
+	return YES;
+}
 
 - (ChildBrowserViewController*)initWithScale:(BOOL)enabled
 {
