@@ -396,6 +396,14 @@ public class ChildBrowser extends CordovaPlugin {
             this.ctx = mContext;
             this.edittext = mEditText;
         }
+        
+        /**
+         * Ignore SSL Certificate errors
+         */
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            handler.proceed();
+        }
 
         /**
          * Notify the host application that a page has started loading.
